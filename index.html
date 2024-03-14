@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leitor de HQs</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .comic-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: white;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    
+    .comic-image {
+      max-width: 100%;
+      height: auto;
+      pointer-events: none; /* Impede interação do usuário com a imagem */
+      user-select: none; /* Impede seleção do usuário na imagem */
+      -webkit-user-drag: none; /* Impede arrastar da imagem no Chrome e Safari */
+      -moz-user-select: none; /* Impede seleção do usuário no Firefox */
+      -ms-user-select: none; /* Impede seleção do usuário no Internet Explorer */
+    }
+    
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .navigation button {
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    
+    .navigation button:hover {
+      background-color: #45a049;
+    }
+    
+    .page-selector {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .page-selector label {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    
+    .page-selector input[type="number"] {
+      padding: 5px;
+      width: 60px;
+    }
+    
+    .page-selector button {
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    
+    .page-selector button:hover {
+      background-color: #45a049;
+    }
+    
+    /* Estilos para o modo escuro */
+    .dark-mode {
+      background-color: #333;
+      color: white;
+    }
+
+    .dark-mode .comic-container {
+      background-color: #222;
+    }
+
+    .dark-mode .navigation button,
+    .dark-mode .page-selector button {
+      background-color: #666;
+    }
+
+    .dark-mode .navigation button:hover,
+    .dark-mode .page-selector button:hover {
+      background-color: #555;
+    }
+    
+    .btn-mode {
+      border: none;
+      height:20px;
+      width:20px;
+      cursor: pointer;
+      background: url("https://zerohunter.com.br/images/dark-mode.svg");
+    }
+    
+    .dark-mode .btn-mode {
+      background: url("https://zerohunter.com.br/images/light-mode.svg");
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+      <!-- Adicionando botão para alternar entre os modos claro e escuro -->
+      <button class="btn-mode" id="toggleModeButton"></button>
+      <br><br>
+    <div class="comic-container">
+      <img class="comic-image" src="page1.jpeg" alt="Page 1">
+    </div>
+    <div class="navigation">
+      <button id="prevButton">Voltar</button>
+      <button id="nextButton">Avançar</button>
+    </div>
+    <div class="page-selector">
+      <label for="pageInput">Ir para a página:</label>
+      <input type="number" id="pageInput" min="1" max="48" value="1">
+      <button id="goButton">Ir</button>
+    </div>
+  </div>
+
+  <script>
+    // Imagens das HQs
+    const comicImages = [];
+
+    for (let i = 1; i <= 48; i++) {
+      comicImages.push(`page${i}.jpeg`);
+    }
+
+    // Referências aos elementos HTML
+    const comicImageElement = document.querySelector(".comic-image");
+    const prevButton = document.getElementById("prevButton");
+    const nextButton = document.getElementById("nextButton");
+    const pageInput = document.getElementById("pageInput");
+    const goButton = document.getElementById("goButton");
+    const toggleModeButton = document.getElementById("toggleModeButton");
+
+    let currentPage = 1;
+
+    // Função para atualizar a imagem da HQ
+    function updateComicImage() {
+      comicImageElement.src = comicImages[currentPage - 1];
+      pageInput.value = currentPage;
+    }
+
+    // Função para avançar uma página
+    function nextPage() {
+      if (currentPage < comicImages.length) {
+        currentPage++;
+        updateComicImage();
+      }
+    }
+
+    // Função para voltar uma página
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        updateComicImage();
+      }
+    }
+
+    // Função para ir para uma página específica
+    function goToPage() {
+      const inputPage = parseInt(pageInput.value);
+      if (inputPage >= 1 && inputPage <= comicImages.length) {
+        currentPage = inputPage;
+        updateComicImage();
+      }
+    }
+
+    // Função para alternar entre os modos claro e escuro
+    function toggleDarkMode() {
+      const body = document.body;
+      body.classList.toggle("dark-mode");
+    }
+
+    // Event listeners para os botões
+    prevButton.addEventListener("click", prevPage);
+    nextButton.addEventListener("click", nextPage);
+    goButton.addEventListener("click", goToPage);
+    toggleModeButton.addEventListener("click", toggleDarkMode);
+
+    // Adicionando evento para avançar página ao clicar na imagem
+    comicImageElement.addEventListener("click", nextPage);
+
+    // Adicionando evento para avançar e voltar páginas com as setas direita e esquerda do mouse
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "ArrowRight") {
+        nextPage();
+      } else if (event.key === "ArrowLeft") {
+        prevPage();
+      }
+    });
+
+    // Atualizar a imagem inicial
+    updateComicImage();
+  </script>
+</body>
+</html>
